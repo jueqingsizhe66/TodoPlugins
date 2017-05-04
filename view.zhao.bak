@@ -106,7 +106,8 @@ function date_view() {
     echo ""
 
     #  Find all dates and sort
-    DATES=$(grep -o '[^  ]*t:[^  ]\+' "$TODO_FILE" | grep '^t:' | sort -u | sed 's/^t://g')
+    #DATES=$(grep -o '[^  ]*t:[^  ]\+' "$TODO_FILE" | grep '^t:' | sort -u | sed 's/^t://g')
+    DATES=$(grep -o '[^ ]*{[^ ]\+' todo.txt|grep '^{'|sed 's/^{//g'|sed 's/[{}]//g'|tr "." "-")
 
     #  Get option
     option=$1
@@ -119,13 +120,15 @@ function date_view() {
         # Check it is a valid date or not
         date_check $option $today $date
         show="$?"
+        echo xinran$show $date $term
         if [[ $show -eq 0 ]]; then
             # If it is not a valid date, just do nothing
             continue
         fi
 
         #  Use core _list function, does numbering and colouring for us
-        DATE_LIST=$(_list "$TODO_FILE" "t:$date" "$term" | sed 's/\(^t:\|\ *t:\)[0-9-]*\ */ /g')
+        DATE_LIST=$(_list "$TODO_FILE" "{$date}" "$term" | sed 's/\(^{\|\ *{\)[0-9-]*\ */ /g')
+        echo "fanxi ${DATE_LIST}"
         if [ -n "${DATE_LIST}" ]; then
             echo  "---  $date  ---"
             echo  "${DATE_LIST}"
@@ -148,7 +151,10 @@ function date_check() {
     # Assign variables
     threshold=$1
     today=$2
+    echo "zhaoliang"$3
+    echo $threshold
     _date=$(date -d "$3" +%s)
+    echo $_date
 
     # Check if the date is valid or not
     # return:
